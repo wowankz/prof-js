@@ -1,0 +1,2 @@
+npm install webpack --save-dev - установка вебпака в разработческие зависимости
+npm install webpack-cli 
