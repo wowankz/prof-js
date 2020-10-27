@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регулярные выражения</title>
+</head>
+
+<body>
+    <form name="feedback" action="#">
+        <label>Имя <br>
+            <input type="text" name="name" oninput="Feedback.checkName()">
+            <output name="error-name"></output>
+        </label><br>
+        <label>E-mail : <br>
+            <input type="email" name="email">
+            <output name="error-email"></output>
+        </label><br>
+        <label>Телефон : <br>
+            <input type="tel" name="phone">
+            <output name="error-phone"></output>
+        </label><br>
+        <button type="submit">Отправить</button>
+    </form>
+
+    <script>
+        const Feedback = {
+            pattern: null,
+            errorPhone: null,
+            errorEmail: null,
+            errorName: null,
+            phone: null,
+            email: null,
+            email: null,
+
+            init() {
+                this.name = document.querySelector('input[name="name"]');
+                this.email = document.querySelector('input[name="email"]');
+                this.phone = document.querySelector('input[name="phone"]');
+                this.errorName = document.querySelector('output[name="error-name"]');
+                this.errorEmail = document.querySelector('output[name="error-email"]');
+                this.errorPhone = document.querySelector('output[name="error-hone"]');
+                this.pattern = {
+                    "name": [new RegExp('[A-Za-zА-Яа-яЁё]', 'g'), 'error name'],
+                    "email": [new RegExp('my[\.|-]?mail@mail.ru', 'g'), 'error email'],
+                    "phone": [new RegExp('\\+\\d\\(\\d{3}\\)\\d{3}-\\d{4}', 'g'), 'error phone']
+                }
+            },
+
+            checkName() {
+                console.log(this.pattern.name[0].test(this.name.value));
+                if (this.pattern.name[0].test(this.name.value)) {
+                    this.errorName.value = '';
+                    return true;
+                } else {
+                    this.errorName.value = this.pattern.name[1];
+                    return false;
+                }
+            },
+
+            checkMail() { },
+
+            checkPhone() { }
+        }
+
+        Feedback.init();
+
+    </script>
+</body>
+
+</html>
