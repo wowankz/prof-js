@@ -1,72 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Регулярные выражения</title>
+        <style>
+            output {
+                padding: 10px 0;
+                display: inline-block;
+                color: red;
+            }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регулярные выражения</title>
-</head>
+            input {
+                outline: none;
+                padding: 3px;
+            }
 
-<body>
-    <form name="feedback" action="#">
-        <label>Имя <br>
-            <input type="text" name="name" oninput="Feedback.checkName()">
-            <output name="error-name"></output>
-        </label><br>
-        <label>E-mail : <br>
-            <input type="email" name="email">
-            <output name="error-email"></output>
-        </label><br>
-        <label>Телефон : <br>
-            <input type="tel" name="phone">
-            <output name="error-phone"></output>
-        </label><br>
-        <button type="submit">Отправить</button>
-    </form>
+            button {
+                padding: 8px;
+                background-color: #5e35b1;
+                color: white;
+                border-radius: 3px;
+                outline: none;
+                border: 1px solid #673ab7;
+                text-transform: uppercase;
+                box-shadow: 2px 2px 0px 0px #9e9e9e;
+                cursor: pointer;
+            }
 
-    <script>
-        const Feedback = {
-            pattern: null,
-            errorPhone: null,
-            errorEmail: null,
-            errorName: null,
-            phone: null,
-            email: null,
-            email: null,
+            button:active {
+                box-shadow: none;
+            }
 
-            init() {
-                this.name = document.querySelector('input[name="name"]');
-                this.email = document.querySelector('input[name="email"]');
-                this.phone = document.querySelector('input[name="phone"]');
-                this.errorName = document.querySelector('output[name="error-name"]');
-                this.errorEmail = document.querySelector('output[name="error-email"]');
-                this.errorPhone = document.querySelector('output[name="error-hone"]');
-                this.pattern = {
-                    "name": [new RegExp('[A-Za-zА-Яа-яЁё]', 'g'), 'error name'],
-                    "email": [new RegExp('my[\.|-]?mail@mail.ru', 'g'), 'error email'],
-                    "phone": [new RegExp('\\+\\d\\(\\d{3}\\)\\d{3}-\\d{4}', 'g'), 'error phone']
+            .valid {
+                border: 1px solid green;
+            }
+
+            .not-valid {
+                border: 1px solid red;
+            }
+        </style>
+    </head>
+
+    <body>
+        <form name="feedback" action="index.html" method="GET">
+            <label
+                >Имя <br />
+                <input type="text" name="name" /><br />
+                <output name="error-name"></output> </label
+            ><br />
+
+            <label
+                >E-mail : <br />
+                <input type="email" name="email" /><br />
+                <output name="error-email"></output> </label
+            ><br />
+
+            <label
+                >Телефон : <br />
+                <input type="tel" name="phone" /><br />
+                <output name="error-phone"></output> </label
+            ><br />
+
+            <button type="submit">Отправить</button>
+        </form>
+
+        <script>
+            class Feedback {
+                constructor() {
+                    this.pattern = {
+                        name: new RegExp('^[A-Za-zА-Яа-яЁё]+$', 'gm'),
+                        email: new RegExp('^[A-Za-z]+[.|-]?[A-Za-z]+@mail.ru$', 'gm'),
+                        phone: new RegExp('^\\+7\\([0-9]{3}\\)[0-9]{3}-[0-9]{4}$', 'gm'),
+                    };
+                    this.name = document.querySelector('input[name="name"]');
+                    this.name.oninput = this.checkName.bind(this);
+
+                    this.email = document.querySelector('input[name="email"]');
+                    this.email.oninput = this.checkMail.bind(this);
+
+                    this.phone = document.querySelector('input[name="phone"]');
+                    this.phone.oninput = this.checkPhone.bind(this);
+
+                    this.form = document.querySelector('form[name="feedback"');
+                    this.form.onsubmit = this.submit.bind(this);
+
+                    this.errorName = document.querySelector('output[name="error-name"]');
+                    this.errorEmail = document.querySelector('output[name="error-email"]');
+                    this.errorPhone = document.querySelector('output[name="error-phone"]');
                 }
-            },
 
-            checkName() {
-                console.log(this.pattern.name[0].test(this.name.value));
-                if (this.pattern.name[0].test(this.name.value)) {
-                    this.errorName.value = '';
-                    return true;
-                } else {
-                    this.errorName.value = this.pattern.name[1];
-                    return false;
+                checkName() {
+                    let str = this.name.value;
+                    let check = this.pattern.name.test(str);
+                    this.pattern.name.lastIndex = 0;
+                    if (check) {
+                        this.errorName.value = '';
+                        this.name.classList.remove('not-valid');
+                        this.name.classList.add('valid');
+                        return true;
+                    } else {
+                        this.errorName.value = 'Имя содержит только буквы. Пример : Владимир или Vladimir';
+                        this.name.classList.remove('valid');
+                        this.name.classList.add('not-valid');
+                        return false;
+                    }
                 }
-            },
 
-            checkMail() { },
+                checkMail() {
+                    let str = this.email.value;
+                    let check = this.pattern.email.test(str);
+                    this.pattern.email.lastIndex = 0;
+                    if (check) {
+                        this.errorEmail.value = '';
+                        this.email.classList.remove('not-valid');
+                        this.email.classList.add('valid');
+                        return true;
+                    } else {
+                        this.errorEmail.value = 'E-mail имеет вид mymail@mail.ru, или my.mail@mail.ru, или my-mail@mail.ru';
+                        this.email.classList.remove('valid');
+                        this.email.classList.add('not-valid');
+                        return false;
+                    }
+                }
 
-            checkPhone() { }
-        }
+                checkPhone() {
+                    let str = this.phone.value;
+                    let check = this.pattern.phone.test(str);
+                    this.pattern.phone.lastIndex = 0;
+                    if (check) {
+                        this.errorPhone.value = '';
+                        this.phone.classList.remove('not-valid');
+                        this.phone.classList.add('valid');
+                        return true;
+                    } else {
+                        this.errorPhone.value = 'Телефон имеет вид +7(000)000-0000';
+                        this.phone.classList.remove('valid');
+                        this.phone.classList.add('not-valid');
+                        return false;
+                    }
+                }
 
-        Feedback.init();
+                submit() {
+                    let name = this.checkName();
+                    let email = this.checkMail();
+                    let phone = this.checkPhone();
+                    return name && email && phone;
+                }
+            }
 
-    </script>
-</body>
-
+            new Feedback();
+        </script>
+    </body>
 </html>
